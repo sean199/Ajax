@@ -7,82 +7,98 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>新闻头条</title>
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/swiper-3.4.2.min.css">
 </head>
 
 <body>
-    <div class="nav">
+    <!-- <div class="nav">
         <div class="nav-menu">
+
+        </div>
+    </div> -->
+    <div id="topNav" class="swiper-container">
+        <div class="swiper-wrapper">
 
         </div>
     </div>
     <div class="content">
-        
+
     </div>
     </div>
+
+
+
 </body>
 <script src="./jQuery.js"></script>
+<script src="./swiper-3.4.2.jquery.min.js"></script>
 <script>
 
-    const list = ['top','shehui','guonei','guoji','yule','tiyu','junshi','keji','caijing','shishang'];
-    
+    const list = ['top', 'shehui', 'guonei', 'guoji', 'yule', 'tiyu', 'junshi', 'keji', 'caijing', 'shishang'];
 
-    for(let i=0; i<list.length; i++){
-        const listText = ['头条','社会','国内','国际','娱乐','体育','军事','科技','财经','时尚'];
-        const navText = `<a id="navtitle-`+i+`" data-id="navtitle-`+i+`" data-type="`+list[i]+`" class="navbox">`+listText[i]+`  </a>`;
-        $('.nav-menu').append(navText);
+
+    for (let i = 0; i < list.length; i++) {
+        const listText = ['头条', '社会', '国内', '国际', '娱乐', '体育', '军事', '科技', '财经', '时尚'];
+        const navText = ` <div class="swiper-slide" style="width: 3rem;"><span id="navtitle-` + i + `" data-id="navtitle-` + i + `" data-type="` + list[i] + `" class="navbox">` + listText[i] + `  </span></div> `;
+        $('.swiper-wrapper').append(navText);
     }
+
+    var mySwiper = new Swiper('#topNav', {
+        freeMode: true,
+        freeModeMomentumRatio: 0.5,
+        slidesPerView: 'auto',
+    })
 
     $('#navtitle-0').addClass('action'); //添加样式
     $('.navbox').click(touchHandle);  //事件触发
 
-    var that =this;
+    var that = this;
     // 触发事件，数据刷新
     function touchHandle(even) {
         $('.content').empty();
-        const httpType =  even.currentTarget.dataset.type;
+        const httpType = even.currentTarget.dataset.type;
         const navId = even.currentTarget.dataset.id;
         console.log(even.currentTarget.dataset.type);
         that.loadInfo(httpType);
         $('.navbox').removeClass('action');
-        $('#'+navId).addClass('action');
+        $('#' + navId).addClass('action');
     }
 
 
 
     //加载数据
     function loadInfo(httpType) {
-        this.request(httpType,(res) => {
+        this.request(httpType, (res) => {
             for (let i = 0; i < res.length; i++) {
                 const txt = `
-                        <a id="info-`+i+`" href="">
+                        <a id="info-`+ i + `" href="">
                             <div class="contentBox">
-                                <div id="title-`+i+`" class="title"></div>
+                                <div id="title-`+ i + `" class="title"></div>
                                 <div class="imgBox">
-                                    <img id="contentImg1-`+i+`" class="contentImg" src="#" alt="">
-                                    <img id="contentImg2-`+i+`" class="contentImg" src="#" alt="">
-                                    <img id="contentImg3-`+i+`" class="contentImg" src="#" alt="">
+                                    <img id="contentImg1-`+ i + `" class="contentImg" src="#" alt="">
+                                    <img id="contentImg2-`+ i + `" class="contentImg" src="#" alt="">
+                                    <img id="contentImg3-`+ i + `" class="contentImg" src="#" alt="">
                                 </div>
-                                <div id="author-`+i+`" class="author"></div>
+                                <div id="author-`+ i + `" class="author"></div>
                             </div>
                         </a>`;
                 $('.content').append(txt);
                 const data = res[i];
-                $('#title-'+i).text(data.title);
-                $('#contentImg1-'+i).attr('src', data.thumbnail_pic_s);
-                $('#contentImg2-'+i).attr('src', data.thumbnail_pic_s02);
-                $('#contentImg3-'+i).attr('src', data.thumbnail_pic_s03);
-                $('#author-'+i).text('作者：' + data.author_name);
-                $('#info-'+i).attr('href', data.url);
+                $('#title-' + i).text(data.title);
+                $('#contentImg1-' + i).attr('src', data.thumbnail_pic_s);
+                $('#contentImg2-' + i).attr('src', data.thumbnail_pic_s02);
+                $('#contentImg3-' + i).attr('src', data.thumbnail_pic_s03);
+                $('#author-' + i).text('作者：' + data.author_name);
+                $('#info-' + i).attr('href', data.url);
             }
         });
     }
 
-    
+
     //初始化
-    loadInfo("top"); 
+    loadInfo("top");
 
     //获取数据
-    function request(httpType,callback) {
+    function request(httpType, callback) {
         $.ajax({
             type: "GET",
             url: "http://toutiao-ali.juheapi.com/toutiao/index",
